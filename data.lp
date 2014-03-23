@@ -1,5 +1,5 @@
 % physical machines
-#const p = 3.
+#const p = 4.
 
 % dimensions
 #const n = 3.
@@ -25,6 +25,8 @@ size(3,5).
 rel(1,2). rel(1,3).
 rel(2,1). rel(2,3).
 rel(3,1). rel(3,2). rel(3,3).
+
+#const fac = 6.
 
 % voxels aka virtual machines
 voxel(1,1,1). voxel(1,2,1). voxel(1,3,1).

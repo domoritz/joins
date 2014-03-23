@@ -44,8 +44,8 @@ match_vox(V,D,X,P) :- assign(V,P), voxel(V,D,X).
 match_voxel_red(D,X,P,R) :- match_vox(V,D,X,P), num_dim(R,L), not L { match_vox(VV,DD,XX,PP) : VV > V, match_vox(V,DD,XX,PPP), rel(R,DD) } L.
 
 % cost of assignment for relations
-cost(P,R,CP,N) :- N = { match_voxel_red(D,X,P,R) }, phys(P), CP = S/NP, num_parts(R,NP), size(R,S).
-cost(P,C) :- C = #sum { CC : CC = CP*N, cost(P,R,CP,N) }, phys(P).
+count(P,R,N) :- N = { match_voxel_red(D,X,P,R) }, phys(P), rel(R,_).
+cost(P,C) :- C = #sum { CC : CC = N * S * fac / NP, count(P,R,N), num_parts(R,NP), size(R,S) }, phys(P).
 
 %%%%%%%%%%%%
 % optimize
