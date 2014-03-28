@@ -2,7 +2,7 @@
 % helpers
 
 % overall cube size, aka number of voxels/ virtual machines
-cube_size(1,S) :- dim(1, S).
+cube_size(1,S) :- dim(1,S).
 cube_size(D,SS*S) :- cube_size(D-1,SS), dim(D,S).
 cube_size(CS) :- cube_size(n,CS).
 
@@ -31,8 +31,8 @@ num_dim(R,L) :- rel(R,_), L = { rel(R,D) }.
 % test
 
 % fix one server to break symmetry
-:- not assign(1,1).
-:- assign(2,P),  P > 2, phys(P).
+%:- not assign(1,1).
+%:- assign(2,P),  P > 2, phys(P).
 
 %%%%%%%%%%%%
 % helper
@@ -45,7 +45,7 @@ match_voxel_red(D,X,P,R) :- match_vox(V,D,X,P), num_dim(R,L), not L { match_vox(
 
 % cost of assignment for relations
 count(P,R,N) :- N = { match_voxel_red(D,X,P,R) }, phys(P), rel(R,_).
-cost(P,C) :- C = #sum { CC : CC = N * S * fac / NP, count(P,R,N), num_parts(R,NP), size(R,S) }, phys(P).
+cost(P,C) :- C = #sum { CC : CC = N * S * CS / NP, count(P,R,N), num_parts(R,NP), size(R,S), cube_size(CS) }, phys(P).
 
 %%%%%%%%%%%%
 % optimize
