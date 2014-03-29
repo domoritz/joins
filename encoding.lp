@@ -64,8 +64,8 @@ maxcost(MC) :- MC = #max { C : cost(P,C) }.
 %:- num_parts(R, NP), NP < #sum { N : count(P,R,N) }, rel(R).
 
 % fix one server to break symmetry
-:- not assign(1,1).
-:- assign(2,P),  P > 2, phys(P).
+:- not assign(0,0).
+:- assign(1,P),  P > 1, phys(P).
 
 %%%%%%%%%%%%
 % optimize
