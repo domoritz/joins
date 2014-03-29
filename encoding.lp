@@ -39,7 +39,7 @@ cell_size(R,S) :- S = SS*CS/NP, size(R,SS), cube_size(CS), num_parts(R,NP).
 % generate
 
 % assign voxel to physical servers
-1 { assign(V,P) : phys(P) } 1 :- voxel(V,D,C).
+assign(V,RS) : phys(RS) :- virt(V).
 
 %%%%%%%%%%%%
 % test
@@ -50,27 +50,33 @@ cell_size(R,S) :- S = SS*CS/NP, size(R,SS), cube_size(CS), num_parts(R,NP).
 %%%%%%%%%%%%
 % helper
 
-% cost of assignment for relations
+% subcube cells that are used because of the assignments
 matching_voxel(P,R,VV) :- sc_voxel(V,R,VV), assign(V,P).
-cost(P,R,C) :- C = CC*S, CC = { matching_voxel(P,R,VV) }, cell_size(R,S), phys(P), rel(R).
-cost(P,C) :- C = #sum { CC,cost(P,R,CC) : cost(P,R,CC) }, phys(P).
+% workload for relations
+cost(P,R,C) :- C = N*S, N = { matching_voxel(P,R,VV) }, phys(P), rel(R), cell_size(R,S).
 
-maxcost(MC) :- MC = #max { C : cost(P,C) }.
+% sum up the costs
+% workload(P,WL) :- WL = #sum { C,cost(P,R,C) : cost(P,R,C) }, phys(P).
+workload(P,-1,0) :- phys(P).
+workload(P,R,WL+C) :- cost(P,R,C), phys(P), workload(P,R-1,WL).
+workload(P,WL) :- workload(P,r-1,WL).
+
+maxwl(MWL) :- MWL = #max { WL : workload(_,WL) }.
+%% maxwl(0,MWL) :- workload(0,MWL).
+%% maxwl(P,MWL) :- workload(P,WL), maxwl(P-1,MWL), MWL >= WL.
+%% maxwl(P,WL) :- workload(P,WL), maxwl(P-1,MWL), MWL < WL.
+%% maxwl(MWL) :- maxwl(p-1,MWL).
 
 %%%%%%%%%%%%
 % constraints that help the solver
 
-% we need at least the number of parts subcube voxels or otherwise data got lost
-%:- num_parts(R, NP), NP < #sum { N : count(P,R,N) }, rel(R).
-
 % fix one server to break symmetry
 :- not assign(0,0).
-:- assign(1,P),  P > 1, phys(P).
 
 %%%%%%%%%%%%
 % optimize
 
-#minimize { MC : maxcost(MC) }.
+#minimize { MC : maxwl(MC) }.
 
 %%%%%%%%%%%%
 % print

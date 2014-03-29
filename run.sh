@@ -1,1 +1,1 @@
-gringo encoding.lp data.lp | clasp --heuristic=Vmtf --parallel-mode 4
+clingo encoding.lp data.lp --heuristic=Vmtf

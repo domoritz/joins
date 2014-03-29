@@ -1,5 +1,5 @@
 % physical machines
-#const p = 4.
+#const p = 6.
 
 % dimensions
 #const n = 3.
@@ -15,12 +15,12 @@ dim(2,3).
 
 % sizes of relations
 % size(R,S)
-size(a,5).
-size(b,1).
-size(c,10).
+size(0,500).
+size(1,100).
+size(2,1000).
 
 % dimensions of relations with the information which dimension it is
 % rel(R,N,D)
-rel(a,0,0). rel(a,1,1).
-rel(b,0,1). rel(b,1,2).
-rel(c,0,0). rel(c,1,2).
+rel(0,0,0). rel(0,1,1).
+rel(1,0,1). rel(1,1,2).
+rel(2,0,0). rel(2,1,2).
