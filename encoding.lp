@@ -1,7 +1,7 @@
 %%%%%%%%%%%%
 % helpers, everything static
 
-% overall cube size, aka number of voxels/ virtual machines
+% overall cube size, aka number of voxels/ virtual servers
 cube_size(0,S) :- dim(0,S).
 cube_size(D,SS*S) :- cube_size(D-1,SS), dim(D,S).
 cube_size(CS) :- cube_size(n-1,CS).
@@ -14,7 +14,7 @@ vox_tmp(0,1).
 vox_tmp(D,B*BB) :- vox_tmp(D-1,B), dim(D-1,BB), D != 0.
 voxel(V,D,C) :- C = (V \ BB) / B, vox_tmp(D,B), vox_tmp(D+1,BB), virt(V).
 
-% physical machines
+% physical servers
 phys(0..p-1).
 
 % relations
@@ -38,7 +38,7 @@ cell_size(R,S) :- S = SS*CS/NP, size(R,SS), cube_size(CS), num_parts(R,NP).
 %%%%%%%%%%%%
 % generate
 
-% assign physical machines to voxel
+% assign voxel to physical servers
 1 { assign(V,P) : phys(P) } 1 :- voxel(V,D,C).
 
 %%%%%%%%%%%%
@@ -52,8 +52,8 @@ cell_size(R,S) :- S = SS*CS/NP, size(R,SS), cube_size(CS), num_parts(R,NP).
 
 % cost of assignment for relations
 matching_voxel(P,R,VV) :- sc_voxel(V,R,VV), assign(V,P).
-count(P,R,N) :- N = { matching_voxel(P,R,VV) }, phys(P), rel(R).
-cost(P,C) :- C = #sum { N*S : count(P,R,N), cell_size(R,S) }, phys(P).
+cost(P,R,C) :- C = CC*S, CC = { matching_voxel(P,R,VV) }, cell_size(R,S), phys(P), rel(R).
+cost(P,C) :- C = #sum { CC : cost(P,R,CC) }, phys(P).
 
 maxcost(MC) :- MC = #max { C : cost(P,C) }.
 
@@ -61,7 +61,7 @@ maxcost(MC) :- MC = #max { C : cost(P,C) }.
 % constraints that help the solver
 
 % we need at least the number of parts subcube voxels or otherwise data got lost
-:- num_parts(R, NP), NP < #sum { N : count(P,R,N) }, rel(R).
+%:- num_parts(R, NP), NP < #sum { N : count(P,R,N) }, rel(R).
 
 % fix one server to break symmetry
 :- not assign(1,1).
@@ -76,8 +76,3 @@ maxcost(MC) :- MC = #max { C : cost(P,C) }.
 % print
 
 #show assign/2.
-#show cell_size/2.
-%#show voxel/3.
-%#show sc_voxel/3.
-%#show matching_voxel/3.
-#show count/3.
