@@ -6,9 +6,6 @@ cube_size(1,S) :- dim(1,S).
 cube_size(D,SS*S) :- cube_size(D-1,SS), dim(D,S).
 cube_size(CS) :- cube_size(n,CS).
 
-% sides of cube
-side(D,X) :- X = 1..L, dim(D,L).
-
 % physical machines
 phys(1..p).
 
@@ -41,7 +38,7 @@ num_dim(R,L) :- rel(R,_), L = { rel(R,D) }.
 match_vox(V,D,X,P) :- assign(V,P), voxel(V,D,X).
 
 % collapse voxels that are the same
-match_voxel_red(D,X,P,R) :- match_vox(V,D,X,P), num_dim(R,L), not L { match_vox(VV,DD,XX,PP) : VV > V, match_vox(V,DD,XX,PPP), rel(R,DD) } L.
+match_voxel_red(D,X,P,R) :- match_vox(V,D,X,P), num_dim(R,L), not L { match_vox(VV,DD,XX,P) : VV > V, match_vox(V,DD,XX,P), rel(R,DD) } L.
 
 % cost of assignment for relations
 count(P,R,N) :- N = { match_voxel_red(D,X,P,R) }, phys(P), rel(R,_).

@@ -11,7 +11,6 @@ dim(2,2).
 dim(3,2).
 
 % relations
-
 #const r = 3.
 
 % sizes of relations
